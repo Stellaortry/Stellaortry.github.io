@@ -1034,6 +1034,36 @@ function watchFilmPhotos(track){
     status.addEventListener('click', event => { event.stopPropagation(); retry(); });
     if (image.complete){ if (image.naturalWidth) ready(); else failed(); }
   });
+  // Warm each unique preview in the background, with only two in flight.
+  // Native lazy loading alone can wait until a moving frame is already visible.
+  const seen = new Set();
+  const queue = [...track.querySelectorAll('.photo-window img')].filter(image => {
+    const source = image.dataset.previewSrc;
+    if (seen.has(source)) return false;
+    seen.add(source);
+    return true;
+  });
+  let next = 0, active = 0;
+  function warmNext(){
+    while (active < 2 && next < queue.length){
+      const image = queue[next++];
+      if (!image.isConnected || (image.complete && image.naturalWidth)) continue;
+      active++;
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        image.removeEventListener('load', finish);
+        image.removeEventListener('error', finish);
+        active--;
+        queueMicrotask(warmNext);
+      };
+      image.addEventListener('load', finish);
+      image.addEventListener('error', finish);
+      image.loading = 'eager';
+    }
+  }
+  warmNext();
 }
 function measureTravelFilm(){
   if (!$('#album').hidden) film.setW = Math.max(1, trackEl.scrollWidth / 2);
