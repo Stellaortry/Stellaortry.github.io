@@ -420,6 +420,22 @@ button:focus-visible{outline:2px solid var(--sand);outline-offset:3px;border-rad
   .bday.is-reading .letter,.bday.is-reading .letter-photo-gallery{animation:none}
 }
 
+/* Explicit photo geometry also keeps older iOS webviews stable during movement. */
+.film{-webkit-mask:none;mask:none}
+.film::before,.film::after{content:"";position:absolute;top:0;bottom:0;width:7%;z-index:1;pointer-events:none}
+.film::before{left:0;background:linear-gradient(90deg,rgba(20,17,18,.92),rgba(20,17,18,0))}
+.film::after{right:0;background:linear-gradient(270deg,rgba(20,17,18,.92),rgba(20,17,18,0))}
+.film-track{will-change:auto}
+.photo-window{position:relative;width:calc(var(--fh) * var(--photo-ratio));height:var(--fh);overflow:hidden;border-radius:2px;background:#211d25}
+.photo-window img{display:block;width:100%;height:100%;max-width:none;object-fit:contain}
+.photo-window.is-error img{visibility:hidden}
+.photo-status{position:absolute;inset:0;width:100%;height:100%;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#2b252e,#1d1922);color:rgba(247,234,219,.75);font-size:13px;line-height:1.7;text-align:center;cursor:pointer}
+.photo-status:disabled{cursor:default}
+.photo-status:disabled::before{content:"";width:18px;height:18px;border:2px solid rgba(241,176,182,.2);border-top-color:var(--pink);border-radius:50%;position:absolute;left:calc(50% - 9px);top:calc(50% - 36px);animation:photoSpin 1s linear infinite}
+.photo-status:focus-visible{outline-offset:-5px}
+@keyframes photoSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.photo-status:disabled::before{animation:none}}
+
 </style>
 
 <svg class="defs" aria-hidden="true" focusable="false">
@@ -646,10 +662,10 @@ const LETTER = [
 ];
 
 /* 照片由构建脚本按城市代码填进来 */
-const PHOTO_DATA = {"HKG":[{"src":"./photo-4136dcd0a207.webp","cap":"香港 · 01","w":1350,"h":1800},{"src":"./photo-62ab4866951a.webp","cap":"香港 · 02","w":1280,"h":1707},{"src":"./photo-4f5a09187ac9.webp","cap":"澳门 · 01","w":1350,"h":1800},{"src":"./photo-0d3efa46e9b9.webp","cap":"澳门 · 02","w":1350,"h":1800},{"src":"./photo-1be11c4b350c.webp","cap":"澳门 · 03","w":1350,"h":1800}],"SHA":[{"src":"./photo-e7fa5c7078aa.webp","cap":"上海 · 01","w":1200,"h":1800},{"src":"./photo-1666f4666fae.webp","cap":"上海 · 02","w":1800,"h":1200},{"src":"./photo-de29b5bff8b8.webp","cap":"上海 · 03","w":1800,"h":1200},{"src":"./photo-95ac07ba130b.webp","cap":"上海 · 04","w":1012,"h":1800}],"TYO":[{"src":"./photo-a9821b306578.webp","cap":"东京 · 01","w":1350,"h":1800},{"src":"./photo-b1ead76dbe19.webp","cap":"东京 · 出门前","w":1350,"h":1800},{"src":"./photo-fc6e0a1494d1.webp","cap":"箱根 · 镜子里的我们","w":1350,"h":1800},{"src":"./photo-520781453cea.webp","cap":"箱根 · 箱根的湖边","w":1350,"h":1800},{"src":"./photo-1894aaff9aa4.webp","cap":"镰仓 · 镰仓的海边","w":1013,"h":1800},{"src":"./photo-3db378e6ff94.webp","cap":"镰仓 · 海堤上","w":1349,"h":1800}],"DLC":[{"src":"./photo-f5aecedfdfb8.webp","cap":"大连 · 01","w":1350,"h":1800},{"src":"./photo-f3c941f0314c.webp","cap":"大连 · 02","w":1350,"h":1800},{"src":"./photo-7b5fd29e4d35.webp","cap":"大连 · 03","w":1350,"h":1800},{"src":"./photo-0f176238b684.webp","cap":"大连 · 04","w":1350,"h":1800},{"src":"./photo-3bfcc9a9e3df.webp","cap":"大连 · 05","w":1350,"h":1800}],"SIN":[{"src":"./photo-8cb50cfeb1eb.webp","cap":"新加坡 · 01","w":1350,"h":1800},{"src":"./photo-3319d9993ad3.webp","cap":"新加坡 · 02","w":1350,"h":1800},{"src":"./photo-1527bc39ddb3.webp","cap":"新加坡 · 03","w":1350,"h":1800},{"src":"./photo-db002040bcfa.webp","cap":"新加坡 · 04","w":1800,"h":1200}],"SEL":[{"src":"./photo-5ffa82a6e123.webp","cap":"首尔 · 01","w":1210,"h":1800},{"src":"./photo-47a61e119f9b.webp","cap":"首尔 · 02","w":1350,"h":1800},{"src":"./photo-fa4b4abaa239.webp","cap":"釜山 · 01","w":1350,"h":1800},{"src":"./photo-d24f1e5b246b.webp","cap":"釜山 · 02","w":1800,"h":1200}]};
+const PHOTO_DATA = {"HKG":[{"src":"./photo-4136dcd0a207.webp","cap":"香港 · 01","w":1350,"h":1800,"preview":"./photo-9870f9495c22.webp"},{"src":"./photo-62ab4866951a.webp","cap":"香港 · 02","w":1280,"h":1707,"preview":"./photo-87ed482ef3a1.webp"},{"src":"./photo-4f5a09187ac9.webp","cap":"澳门 · 01","w":1350,"h":1800,"preview":"./photo-b72c94867337.webp"},{"src":"./photo-0d3efa46e9b9.webp","cap":"澳门 · 02","w":1350,"h":1800,"preview":"./photo-0dd4db4e22d1.webp"},{"src":"./photo-1be11c4b350c.webp","cap":"澳门 · 03","w":1350,"h":1800,"preview":"./photo-107a8a72db2b.webp"}],"SHA":[{"src":"./photo-e7fa5c7078aa.webp","cap":"上海 · 01","w":1200,"h":1800,"preview":"./photo-979d6128eddd.webp"},{"src":"./photo-1666f4666fae.webp","cap":"上海 · 02","w":1800,"h":1200,"preview":"./photo-aa1219517312.webp"},{"src":"./photo-de29b5bff8b8.webp","cap":"上海 · 03","w":1800,"h":1200,"preview":"./photo-6bbc0172b916.webp"},{"src":"./photo-95ac07ba130b.webp","cap":"上海 · 04","w":1012,"h":1800,"preview":"./photo-434c72c08c73.webp"}],"TYO":[{"src":"./photo-a9821b306578.webp","cap":"东京 · 01","w":1350,"h":1800,"preview":"./photo-0b98fe7d89ca.webp"},{"src":"./photo-b1ead76dbe19.webp","cap":"东京 · 出门前","w":1350,"h":1800,"preview":"./photo-1572dfbe3298.webp"},{"src":"./photo-fc6e0a1494d1.webp","cap":"箱根 · 镜子里的我们","w":1350,"h":1800,"preview":"./photo-e41b4728b824.webp"},{"src":"./photo-520781453cea.webp","cap":"箱根 · 箱根的湖边","w":1350,"h":1800,"preview":"./photo-21774571179b.webp"},{"src":"./photo-1894aaff9aa4.webp","cap":"镰仓 · 镰仓的海边","w":1013,"h":1800,"preview":"./photo-baa826f37f35.webp"},{"src":"./photo-3db378e6ff94.webp","cap":"镰仓 · 海堤上","w":1349,"h":1800,"preview":"./photo-6a7768f22946.webp"}],"DLC":[{"src":"./photo-f5aecedfdfb8.webp","cap":"大连 · 01","w":1350,"h":1800,"preview":"./photo-663dae9c1228.webp"},{"src":"./photo-f3c941f0314c.webp","cap":"大连 · 02","w":1350,"h":1800,"preview":"./photo-703b2042c4bb.webp"},{"src":"./photo-7b5fd29e4d35.webp","cap":"大连 · 03","w":1350,"h":1800,"preview":"./photo-75ebdacbd98c.webp"},{"src":"./photo-0f176238b684.webp","cap":"大连 · 04","w":1350,"h":1800,"preview":"./photo-d6676a262f1c.webp"},{"src":"./photo-3bfcc9a9e3df.webp","cap":"大连 · 05","w":1350,"h":1800,"preview":"./photo-a6a7769b8d18.webp"}],"SIN":[{"src":"./photo-8cb50cfeb1eb.webp","cap":"新加坡 · 01","w":1350,"h":1800,"preview":"./photo-14b5f9a58240.webp"},{"src":"./photo-3319d9993ad3.webp","cap":"新加坡 · 02","w":1350,"h":1800,"preview":"./photo-3a5d83876b7a.webp"},{"src":"./photo-1527bc39ddb3.webp","cap":"新加坡 · 03","w":1350,"h":1800,"preview":"./photo-cc5065f9740e.webp"},{"src":"./photo-db002040bcfa.webp","cap":"新加坡 · 04","w":1800,"h":1200,"preview":"./photo-24f831cd270d.webp"}],"SEL":[{"src":"./photo-5ffa82a6e123.webp","cap":"首尔 · 01","w":1210,"h":1800,"preview":"./photo-538e8ae88e02.webp"},{"src":"./photo-47a61e119f9b.webp","cap":"首尔 · 02","w":1350,"h":1800,"preview":"./photo-408934e88b28.webp"},{"src":"./photo-fa4b4abaa239.webp","cap":"釜山 · 01","w":1350,"h":1800,"preview":"./photo-7e0dcb64c804.webp"},{"src":"./photo-d24f1e5b246b.webp","cap":"釜山 · 02","w":1800,"h":1200,"preview":"./photo-014ec1bae04d.webp"}]};
 
 // 生日信独享照片，独立于前面的旅行相册。
-const LETTER_PHOTOS = [{"src":"./photo-f011f24e4f7d.jpg","cap":"那年的球场","w":675,"h":900},{"src":"./photo-8e02e18b146f.webp","cap":"留给最后的回忆 · 02","w":1200,"h":1600},{"src":"./photo-151655f18176.webp","cap":"留给最后的回忆 · 03","w":1200,"h":1600},{"src":"./photo-b8aec67787bd.webp","cap":"留给最后的回忆 · 04","w":894,"h":1600},{"src":"./photo-b9bbc6832f75.webp","cap":"留给最后的回忆 · 05","w":1200,"h":1600},{"src":"./photo-21e29556d4b1.webp","cap":"留给最后的回忆 · 06","w":1200,"h":1600},{"src":"./photo-c8e344a920a7.webp","cap":"留给最后的回忆 · 07","w":1200,"h":1600},{"src":"./photo-1d63955067e0.webp","cap":"留给最后的回忆 · 08","w":1200,"h":1600},{"src":"./photo-2cd113acc5ae.webp","cap":"留给最后的回忆 · 09","w":1200,"h":1600},{"src":"./photo-610b2c4026c1.webp","cap":"留给最后的回忆 · 10","w":1200,"h":1600},{"src":"./photo-69907e3a62f7.webp","cap":"留给最后的回忆 · 11","w":1200,"h":1600},{"src":"./photo-fa7d07d95ca1.webp","cap":"留给最后的回忆 · 12","w":1200,"h":1600},{"src":"./photo-b4766cbcf15d.webp","cap":"留给最后的回忆 · 13","w":1200,"h":1600},{"src":"./photo-1d861d1ca60c.webp","cap":"留给最后的回忆 · 14","w":1200,"h":1600},{"src":"./photo-f1378fb8acb2.webp","cap":"留给最后的回忆 · 15","w":1200,"h":1600},{"src":"./photo-ead92a8d7460.webp","cap":"留给最后的回忆 · 16","w":1200,"h":1600},{"src":"./photo-831b04f3996e.webp","cap":"留给最后的回忆 · 17","w":1200,"h":1600},{"src":"./photo-62779b175f9d.webp","cap":"留给最后的回忆 · 18","w":1200,"h":1600},{"src":"./photo-30280ef29333.webp","cap":"留给最后的回忆 · 19","w":1200,"h":1600},{"src":"./photo-03957dbdf8c0.webp","cap":"留给最后的回忆 · 20","w":1065,"h":1420},{"src":"./photo-05a5434ff4a9.webp","cap":"留给最后的回忆 · 21","w":1200,"h":1600},{"src":"./photo-21e2e20558c2.webp","cap":"留给最后的回忆 · 22","w":1200,"h":1600},{"src":"./photo-97c75c4a8b26.webp","cap":"留给最后的回忆 · 23","w":800,"h":1600}];
+const LETTER_PHOTOS = [{"src":"./photo-f011f24e4f7d.jpg","cap":"那年的球场","w":675,"h":900,"preview":"./photo-745c11c927bd.webp"},{"src":"./photo-8e02e18b146f.webp","cap":"留给最后的回忆 · 02","w":1200,"h":1600,"preview":"./photo-9e2e9b890190.webp"},{"src":"./photo-151655f18176.webp","cap":"留给最后的回忆 · 03","w":1200,"h":1600,"preview":"./photo-00a2752bf410.webp"},{"src":"./photo-b8aec67787bd.webp","cap":"留给最后的回忆 · 04","w":894,"h":1600,"preview":"./photo-b6b3d335ce2b.webp"},{"src":"./photo-b9bbc6832f75.webp","cap":"留给最后的回忆 · 05","w":1200,"h":1600,"preview":"./photo-548aae8338f7.webp"},{"src":"./photo-21e29556d4b1.webp","cap":"留给最后的回忆 · 06","w":1200,"h":1600,"preview":"./photo-92aba4fecbf2.webp"},{"src":"./photo-c8e344a920a7.webp","cap":"留给最后的回忆 · 07","w":1200,"h":1600,"preview":"./photo-bca85bb5f16b.webp"},{"src":"./photo-1d63955067e0.webp","cap":"留给最后的回忆 · 08","w":1200,"h":1600,"preview":"./photo-acc175e1041f.webp"},{"src":"./photo-2cd113acc5ae.webp","cap":"留给最后的回忆 · 09","w":1200,"h":1600,"preview":"./photo-c64d08cee3b3.webp"},{"src":"./photo-610b2c4026c1.webp","cap":"留给最后的回忆 · 10","w":1200,"h":1600,"preview":"./photo-36ba8699f7d9.webp"},{"src":"./photo-69907e3a62f7.webp","cap":"留给最后的回忆 · 11","w":1200,"h":1600,"preview":"./photo-cb555a3ee6e4.webp"},{"src":"./photo-fa7d07d95ca1.webp","cap":"留给最后的回忆 · 12","w":1200,"h":1600,"preview":"./photo-166fb06b333d.webp"},{"src":"./photo-b4766cbcf15d.webp","cap":"留给最后的回忆 · 13","w":1200,"h":1600,"preview":"./photo-ac1abe75b815.webp"},{"src":"./photo-1d861d1ca60c.webp","cap":"留给最后的回忆 · 14","w":1200,"h":1600,"preview":"./photo-416e149d2f5b.webp"},{"src":"./photo-f1378fb8acb2.webp","cap":"留给最后的回忆 · 15","w":1200,"h":1600,"preview":"./photo-6666c4429c52.webp"},{"src":"./photo-ead92a8d7460.webp","cap":"留给最后的回忆 · 16","w":1200,"h":1600,"preview":"./photo-f96125c1e054.webp"},{"src":"./photo-831b04f3996e.webp","cap":"留给最后的回忆 · 17","w":1200,"h":1600,"preview":"./photo-f21c468a1bae.webp"},{"src":"./photo-62779b175f9d.webp","cap":"留给最后的回忆 · 18","w":1200,"h":1600,"preview":"./photo-c4a9732cb330.webp"},{"src":"./photo-30280ef29333.webp","cap":"留给最后的回忆 · 19","w":1200,"h":1600,"preview":"./photo-fe814a1cafc9.webp"},{"src":"./photo-03957dbdf8c0.webp","cap":"留给最后的回忆 · 20","w":1065,"h":1420,"preview":"./photo-fdabb5df797a.webp"},{"src":"./photo-05a5434ff4a9.webp","cap":"留给最后的回忆 · 21","w":1200,"h":1600,"preview":"./photo-1807637f373d.webp"},{"src":"./photo-21e2e20558c2.webp","cap":"留给最后的回忆 · 22","w":1200,"h":1600,"preview":"./photo-53d2270434b8.webp"},{"src":"./photo-97c75c4a8b26.webp","cap":"留给最后的回忆 · 23","w":800,"h":1600,"preview":"./photo-2cdc930154f9.webp"}];
 TRIPS.forEach(t => { if (PHOTO_DATA[t.code]) t.photos = PHOTO_DATA[t.code]; });
 
 /* ===================================================================== */
@@ -968,13 +984,68 @@ let albumIdx = 0;
 const CAM = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const filmEl = $("#film"), trackEl = $("#filmTrack");
-const film = { offset:0, setW:1, speed:38, hover:false, drag:null };
+const film = { offset:0, setW:1, speed:38, hover:false, drag:null, ready:false };
+// Show a clear state while a photo is downloading; retry transient failures.
+const watchedPhotos = new WeakSet();
+function watchFilmPhotos(track){
+  track.querySelectorAll('.photo-window img').forEach(image => {
+    if (watchedPhotos.has(image)) return;
+    watchedPhotos.add(image);
+    const stage = image.parentElement;
+    const status = stage.querySelector('.photo-status');
+    let attempts = 0;
+    let retryTimer = null;
+    function ready(){
+      clearTimeout(retryTimer);
+      stage.classList.remove('is-error');
+      stage.classList.add('is-loaded');
+      status.hidden = true;
+      if (track === trackEl){
+        film.ready = !!track.querySelector('img')?.naturalWidth;
+        measureTravelFilm();
+      }else{
+        letterFilm.ready = !!track.querySelector('img')?.naturalWidth;
+        measureLetterFilm();
+      }
+    }
+    function retry(){
+      clearTimeout(retryTimer);
+      if (!image.isConnected) return;
+      attempts++;
+      stage.classList.remove('is-error');
+      status.hidden = false;
+      status.disabled = true;
+      status.textContent = '照片加载中…';
+      const source = image.dataset.previewSrc;
+      if (source.startsWith('data:')){ image.src = source; return; }
+      const url = new URL(source, document.baseURI);
+      url.searchParams.set('retry', String(Date.now()));
+      image.src = url.href;
+    }
+    function failed(){
+      stage.classList.add('is-error');
+      status.hidden = false;
+      status.disabled = false;
+      status.textContent = '照片暂未加载 · 点此重试';
+      if (attempts === 0 && !image.dataset.previewSrc.startsWith('data:')) retryTimer = setTimeout(retry, 1500);
+    }
+    image.addEventListener('load', ready);
+    image.addEventListener('error', failed);
+    status.addEventListener('click', event => { event.stopPropagation(); retry(); });
+    if (image.complete){ if (image.naturalWidth) ready(); else failed(); }
+  });
+}
+function measureTravelFilm(){
+  if (!$('#album').hidden) film.setW = Math.max(1, trackEl.scrollWidth / 2);
+}
+addEventListener('resize', measureTravelFilm);
+
 function frameHTML(tr, p, n, showCaption = true){
   const mark = `${String(n).padStart(2,"0")}A`;
   const caption = showCaption ? p.cap || "" : "";
   const alt = showCaption ? p.cap || tr.title : "生日信照片 " + n;
   const pic = p.src
-    ? `<img src="${esc(p.src)}" width="${p.w || 4}" height="${p.h || 5}" alt="${esc(alt)}" draggable="false">`
+    ? `<div class="photo-window" style="--photo-ratio:${(p.w || 4) / (p.h || 5)}"><img src="${esc(p.preview || p.src)}" data-preview-src="${esc(p.preview || p.src)}" data-full-src="${esc(p.src)}" width="${p.w || 4}" height="${p.h || 5}" alt="${esc(alt)}" loading="${n <= 2 ? "eager" : "lazy"}" decoding="async" draggable="false"><button class="photo-status" type="button" disabled>照片加载中…</button></div>`
     : `<div class="ph" style="--h:${tr.hue + n*12}">${CAM}<span>照片待添加</span></div>`;
   const edges = showCaption ? `<span class="edge">▸ ${mark}  ${esc(p.cap || tr.code)}</span><span class="edge r">INF² ${tr.year}</span>` : "";
   return `<div class="frame" data-cap="${esc(caption)}">${pic}${edges}</div>`;
@@ -987,17 +1058,19 @@ function buildFilm(tr){
   const reps = Math.max(1, Math.ceil(innerWidth * 1.15 / w1));
   const set = Array(reps).fill(one).join("");
   trackEl.innerHTML = set + set;
-  film.setW = trackEl.scrollWidth / 2; film.offset = 0;
-  trackEl.style.transform = "translate3d(0,0,0)";
+  film.setW = Math.max(1, trackEl.scrollWidth / 2); film.offset = 0; film.ready = false;
+  watchFilmPhotos(trackEl);
+  trackEl.style.transform = "translateX(0px)";
 }
 function updateFilm(dt){
-  if (!film.drag && !film.hover && !reduce) film.offset += film.speed * dt;
+  if (film.ready && !film.drag && !film.hover && !reduce) film.offset += film.speed * dt;
   film.offset = ((film.offset % film.setW) + film.setW) % film.setW;
-  trackEl.style.transform = `translate3d(${-film.offset}px,0,0)`;
+  trackEl.style.transform = `translateX(${-film.offset}px)`;
 }
 filmEl.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") film.hover = true; });
 filmEl.addEventListener("pointerleave", () => { film.hover = false; });
 filmEl.addEventListener("pointerdown", e => {
+  if (e.target.closest(".photo-status")) return;
   film.drag = { x:e.clientX, o:film.offset, moved:0, frame:e.target.closest(".frame") };
   filmEl.setPointerCapture(e.pointerId); filmEl.classList.add("grabbing");
 });
@@ -1007,7 +1080,7 @@ filmEl.addEventListener("pointermove", e => {
 });
 const endDrag = () => {
   const d = film.drag; film.drag = null; filmEl.classList.remove("grabbing");
-  if (d && d.moved < 6 && d.frame){ const img = d.frame.querySelector("img"); if (img) openLightbox(img.src, img.alt, d.frame.dataset.cap); }
+  if (d && d.moved < 6 && d.frame){ const img = d.frame.querySelector("img"); if (img) openLightbox(img.dataset.fullSrc || img.src, img.alt, d.frame.dataset.cap); }
 };
 filmEl.addEventListener("pointerup", endDrag);
 filmEl.addEventListener("pointercancel", () => { film.drag = null; filmEl.classList.remove("grabbing"); });
@@ -1152,7 +1225,7 @@ $("#nowPlaying").onclick = () => setSound(!soundOn);
 const FW_COLORS = ["#f1b0b6","#f6c9cd","#e3ad45","#8fb886","#c9423e","#fff3e3"];
 let rockets = [], parts = [], fwOn = false, fwNext = 0;
 /* Reuse the travel-album film frames for the letter's independent collection. */
-const letterFilm = { offset:0, setW:1, speed:film.speed, hover:false, drag:null, active:false };
+const letterFilm = { offset:0, setW:1, speed:film.speed, hover:false, drag:null, active:false, ready:false };
 let letterRevealTimer = null;
 
 function stopLetterSlideshow(){
@@ -1176,16 +1249,17 @@ function updateLetterFilm(dt){
   const viewport = $("#letterFilm");
   const track = $("#letterFilmTrack");
   const bounds = viewport.getBoundingClientRect();
-  if (!letterFilm.drag && !letterFilm.hover && !reduce && $("#lightbox").hidden && bounds.bottom > 0 && bounds.top < innerHeight){
+  if (letterFilm.ready && !letterFilm.drag && !letterFilm.hover && !reduce && $("#lightbox").hidden && bounds.bottom > 0 && bounds.top < innerHeight){
     letterFilm.offset += letterFilm.speed * dt;
   }
   letterFilm.offset = ((letterFilm.offset % letterFilm.setW) + letterFilm.setW) % letterFilm.setW;
-  track.style.transform = `translate3d(${-letterFilm.offset}px,0,0)`;
+  track.style.transform = `translateX(${-letterFilm.offset}px)`;
 }
 
 function buildLetterPhotos(){
   stopLetterSlideshow();
   letterFilm.offset = 0;
+  letterFilm.ready = false;
   const gallery = $("#letterPhotoGallery");
   gallery.hidden = LETTER_PHOTOS.length === 0;
   if (gallery.hidden) return;
@@ -1194,11 +1268,12 @@ function buildLetterPhotos(){
   const track = $("#letterFilmTrack");
   const frames = LETTER_PHOTOS.map((photo,index) => frameHTML({title:"生日信照片"}, photo, index+1, false)).join("");
   track.innerHTML = frames + frames;
-  track.querySelectorAll("img").forEach(image => image.addEventListener("load", measureLetterFilm));
+  watchFilmPhotos(track);
 
   viewport.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") letterFilm.hover = true; });
   viewport.addEventListener("pointerleave", () => { letterFilm.hover = false; });
   viewport.addEventListener("pointerdown", event => {
+    if (event.target.closest(".photo-status")) return;
     letterFilm.drag = { x:event.clientX, offset:letterFilm.offset, moved:0, frame:event.target.closest(".frame") };
     viewport.setPointerCapture(event.pointerId);
     viewport.classList.add("grabbing");
@@ -1215,7 +1290,7 @@ function buildLetterPhotos(){
     viewport.classList.remove("grabbing");
     if (drag && drag.moved < 6 && drag.frame){
       const image = drag.frame.querySelector("img");
-      if (image) openLightbox(image.src, image.alt, "");
+      if (image) openLightbox(image.dataset.fullSrc || image.src, image.alt, "");
     }
   });
   viewport.addEventListener("pointercancel", () => {
@@ -1241,7 +1316,7 @@ function buildLetterPhotos(){
         return bounds.left <= middle && bounds.right >= middle;
       });
       const image = frame?.querySelector("img");
-      if (image) openLightbox(image.src, image.alt, "");
+      if (image) openLightbox(image.dataset.fullSrc || image.src, image.alt, "");
     }
   });
 }
